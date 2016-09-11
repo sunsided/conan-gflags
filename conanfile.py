@@ -9,8 +9,8 @@ class GFlagsConan(ConanFile):
     version = "master"
     generators = "cmake"
     settings = "os", "arch", "compiler", "build_type"
-    options = {"shared": [True, False]}
-    default_options = "shared=True"
+    options = {"shared": [True, False], "nothreads": [True, False]}
+    default_options = "shared=True", "nothreads=False"
     exports="CMakeLists.txt", "FindGflags.cmake", "change_dylib_names.sh"
     url="https://github.com/sunsided/conan-gflags"
     license="https://github.com/gflags/gflags/blob/master/COPYING.txt"
@@ -31,7 +31,9 @@ class GFlagsConan(ConanFile):
             self.run("mkdir _build")
         cd_build = "cd _build"
         shared = "-DBUILD_SHARED_LIBS=1" if self.options.shared else ""
-        self.run("%s && cmake .. %s %s" % (cd_build, cmake.command_line, shared))
+        nothreads = "-DBUILD_gflags_nothreads_LIB=0" if not self.options.nothreads else ""
+
+        self.run("%s && cmake .. %s %s %s" % (cd_build, cmake.command_line, shared, nothreads))
         self.run("%s && cmake --build . %s" % (cd_build, cmake.build_config))
 
     def package(self):
