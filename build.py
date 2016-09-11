@@ -11,8 +11,18 @@ if __name__ == "__main__":
         # Selecting the debug runtimes (MTd, MDd) on Windows for Debug builds
         if settings["compiler"] == "Visual Studio" and settings["build_type"] == "Debug":
             if not settings["compiler.runtime"].endswith("d"):
-                settings["compiler.runtime"] = settings["compiler.runtime"] + "d"
-        patched_builds.append([settings, options])
+                settings["compiler.runtime"] += "d"
+
+        # Build both libstdc++ and libstdc++11
+        elif settings["compiler"] == "gcc":
+            settings["compiler.libcxx"] = "libstdc++11"
+            patched_builds.append([settings, options])
+
+            settings["compiler.libcxx"] = "libstdc++"
+            patched_builds.append([settings, options])
+
+        else:
+            patched_builds.append([settings, options])
 
     builder.builds = patched_builds
 
