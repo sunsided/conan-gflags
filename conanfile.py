@@ -6,18 +6,18 @@ from conans import CMake
 
 class GFlagsConan(ConanFile):
     name = "gflags"
-    version = "2.1.2"
+    version = "master"
     generators = "cmake"
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False]}
     default_options = "shared=True"
     exports="CMakeLists.txt", "FindGflags.cmake", "change_dylib_names.sh"
-    url="http://github.com/eliaskousk/conan-gflags"
+    url="https://github.com/sunsided/conan-gflags"
     license="https://github.com/gflags/gflags/blob/master/COPYING.txt"
     zip_folder_name = "gflags-%s" % version
 
     def source(self):
-        zip_name = "v%s.tar.gz" % self.version
+        zip_name = "%s.zip" % self.version
         url = "https://github.com/gflags/gflags/archive/%s" % zip_name
         download(url, zip_name)
         unzip(zip_name)
@@ -47,12 +47,16 @@ class GFlagsConan(ConanFile):
         self.copy(pattern="*.h", dst="include", src=incdir, keep_path=True)
 
         # Copying static and dynamic libs
-        libdir = "_build/%s/lib" % self.zip_folder_name
+        libdir = "_build/lib"
         self.copy(pattern="*.a", dst="lib", src=libdir, keep_path=False)
         self.copy(pattern="*.lib", dst="lib", src=libdir, keep_path=False)
         self.copy(pattern="*.so*", dst="lib", src=libdir, keep_path=False)
         self.copy(pattern="*.dylib*", dst="lib", src=libdir, keep_path=False)
         self.copy(pattern="*.dll", dst="bin", src=libdir, keep_path=False)
+
+        # Copying binaries
+        bindir = "_build/bin"
+        self.copy(pattern="*.dll", dst="bin", src=bindir, keep_path=False)
 
     def package_info(self):
         self.cpp_info.libs = ['gflags']

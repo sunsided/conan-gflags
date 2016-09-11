@@ -3,15 +3,15 @@ from conans import CMake
 import os
 
 #This easily allows to copy the package in other user or channel
-channel = os.getenv("CONAN_CHANNEL", "stable")
-username = os.getenv("CONAN_USERNAME", "eliaskousk")
+channel = os.getenv("CONAN_CHANNEL", "snapshot")
+username = os.getenv("CONAN_USERNAME", "sunside")
 
 class DefaultNameConan(ConanFile):
     name = "DefaultName"
     version = "0.1"
     settings = "os", "compiler", "arch", "build_type"
     generators = "cmake"
-    requires = "gflags/2.1.2@%s/%s" % (username, channel)
+    requires = "gflags/master@%s/%s" % (username, channel)
 
     def build(self):
         cmake = CMake(self.settings)
